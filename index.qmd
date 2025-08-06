@@ -1,0 +1,119 @@
+::: {style="text-align: center; background-color: #dae5ea; padding: 20px; border-radius: 10px;"}
+
+## Malamud Lectures<br><br>Foundations of Big Data and Machine Learning <br>in Finance, Statistics, and Beyond
+:::
+
+---
+
+::: {style="text-align: center;"}
+
+#### Mon - Thu, Sept 22 -25 and Mon - Wed, Sept 29 - Oct 1, 2025
+
+:::
+
+---
+
+:::: {.columns}
+::: {.column width="20%"} 
+![](photo.jpg)
+:::
+::: {.column width="5%"}
+:::
+::: {.column width="45%"} 
+[Semyon Malamud](https://www.epfl.ch/labs/sfi-sm/)<br>
+Senior Chair, Swiss Finance Institute <br>
+Associate Professor, EPFL<br>
+Research Fellow, CEPR<br>
+[semyon.malamud@epfl.ch](mailto:semyon.malamud@epfl.ch)
+:::
+::: {.column width="30%"}
+**Time:** 4:00-6:00 p.m.  
+**Location:** McNair Hall 318  
+
+![](RiceUniversity.png){width="60%"}
+:::
+::::
+
+---
+
+### Target Audience
+
+Students and faculty in Finance, Statistics, Computer Science, Economics, and related disciplines 
+
+### Sponsors
+
+- Creative Ventures Fund, Office of Research
+- Jones Graduate School of Business
+- Center for Computational Finance & Economic Systems
+- Department of Computer Science
+- Department of Economics
+
+### Learning Outcomes
+
+- **Modeling with High-Dimensional Predictors**<br>Understand modern methods for large-scale data and factor models in finance
+- **Overfitting and Complexity**<br>Recognize the role of over-parameterized models in predictive performance, portfolio choice, and decision making
+- **Neural Networks**<br>Interpret deep vs. shallow learning architectures and their application to financial data. Deep learning and feature learning
+- **Factor Models**<br>Construct and analyze high-dimensional factor models for the cross-section of returns
+- **Equilibrium**<br>Assess how complexity corrections change asset pricing fundamentals and how complexity leads to tractable equilibria with non-linear parameter learning
+
+### Details
+
+:::: {.columns}
+::: {.column width="48%"}
+#### [Monday, Sept 22](lecture1.qmd)
+- Overfitting
+- Double Descent
+- Model Complexity
+- Inductive Biases
+
+#### [Tuesday, Sept 23](lecture2.qmd)
+- Regularization
+- Model Selection
+- Sparsity
+- Non-Linearities
+- Random Features
+
+#### [Wednesday, Sept 24](lecture3.qmd)
+- Implicit Regularization
+- The Virtue of Complexity
+- The Magic of High Dimensions
+- Basics of Random Matrix Theory
+
+#### [Thursday, Sept 25](lecture4.qmd)
+- Kernel Methods
+- Shallow Learning
+- Curse of Dimensionality
+:::
+
+::: {.column width="4%"}
+:::
+
+::: {.column width="48%"}
+#### [Monday, Sept 29](lecture5.qmd)
+- Deep vs. Shallow Learning
+- Neural Tangent Kernel
+- Feature Learning
+
+#### [Tuesday, Sept 30](lecture6.qmd)
+- High-Dimensional Factor Models
+- Portfolio Tangent Kernel
+- The Complexity Wedge
+
+#### [Wednesday, Oct 1](lecture7.qmd)
+- Bayesian Learning
+- Gaussian Processes
+- Equilibrium Models in High Dimensions
+:::
+::::
+
+### Prerequisites
+
+Basic probability and linear algebra. Some Python skills would also be useful, as we will be working with Jupyter Notebooks.
+
+### Organizer and Contact
+
+[Kerry Back](mailto:kerry.e.back@rice.edu)<br>
+J. Howard Creekmore Professor of Finance and Professor of Economics
+
+
+
