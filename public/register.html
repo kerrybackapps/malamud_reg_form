@@ -55,11 +55,12 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title mb-0">Registration Form</h3>
+                    <p class="mb-0 mt-2">Registration is not required, but it is appreciated.</p>
                 </div>
                 <div class="card-body">
                     <form id="registrationForm">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Full Name *</label>
+                            <label for="name" class="form-label">Name *</label>
                             <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         
@@ -79,12 +80,12 @@
                                 <option value="">Select your role</option>
                                 <option value="faculty">Faculty</option>
                                 <option value="student">Student</option>
-                                <option value="staff">Staff</option>
+                                <option value="other">Other</option>
                             </select>
                         </div>
                         
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                            <button type="submit" class="btn btn-primary btn-lg">Click here to register</button>
                         </div>
                     </form>
                     
@@ -161,7 +162,7 @@ document.getElementById('registrationForm').addEventListener('submit', async (e)
         errorMsg.classList.remove('d-none');
     } finally {
         button.disabled = false;
-        button.innerHTML = 'Register';
+        button.innerHTML = 'Click here to register';
     }
 });
 </script>
