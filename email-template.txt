@@ -1,5 +1,4 @@
-MALAMUD LECTURES
-Foundations of Big Data and Machine Learning in Finance, Statistics, and Beyond
+FOUNDATIONS OF BIG DATA AND MACHINE LEARNING IN FINANCE, STATISTICS, AND BEYOND
 
 Mon - Thu, Sept 22-25 and Mon - Wed, Sept 29 - Oct 1, 2025
 
@@ -13,6 +12,8 @@ semyon.malamud@epfl.ch
 TIME: 4:00-6:00 p.m.
 LOCATION: McNair Hall 318, Rice University
 
+Learn more at: https://malamud-lectures.rice-business.org
+
 TARGET AUDIENCE:
 Students and faculty in Finance, Statistics, Computer Science, Economics, and related disciplines
 
@@ -22,8 +23,6 @@ SPONSORS:
 - Center for Computational Finance & Economic Systems
 - Department of Computer Science
 - Department of Economics
-
-Learn more and register at: https://malamud-lectures.rice-business.org
 
 ---
 Organized by Kerry Back
