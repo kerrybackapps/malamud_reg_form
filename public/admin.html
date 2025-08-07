@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Panel - Malamud Lectures</title>
+    
+    <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em;
+      vertical-align: middle;
+    }
+    .stats-card {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .stats-card h3 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: #0066cc;
+    }
+    .stats-card p {
+      margin: 5px 0 0 0;
+      color: #6c757d;
+    }
+    #registrationsTable {
+      font-size: 0.9rem;
+    }
+    </style>
+
+    <script src="site_libs/quarto-nav/quarto-nav.js"></script>
+    <script src="site_libs/clipboard/clipboard.min.js"></script>
+    <script src="site_libs/quarto-html/quarto.js" type="module"></script>
+    <script src="site_libs/quarto-html/popper.min.js"></script>
+    <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+    <script src="site_libs/quarto-html/anchor.min.js"></script>
+    <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+    <link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+    <script src="site_libs/bootstrap/bootstrap.min.js"></script>
+    <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+    <link href="site_libs/bootstrap/bootstrap-52d8d4a1bc7a18dd637875c3d028be30.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<main class="content" id="quarto-document-content">
+
+<!-- Login Section -->
+<div id="loginSection" class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Admin Login</h3>
+                </div>
+                <div class="card-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                    
+                    <div id="loginError" class="alert alert-danger mt-3 d-none" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill"></i> <span id="loginErrorText">Invalid credentials</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Panel Section (hidden by default) -->
+<div id="adminPanel" class="container-fluid mt-4 d-none">
+    <div class="row">
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Admin Panel - Malamud Lectures Registrations</h1>
+                <button id="logoutBtn" class="btn btn-outline-danger">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Statistics Row -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h3 id="totalCount">0</h3>
+                <p>Total Registrations</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h3 id="facultyCount">0</h3>
+                <p>Faculty</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h3 id="studentCount">0</h3>
+                <p>Students</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stats-card">
+                <h3 id="otherCount">0</h3>
+                <p>Other</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Actions Row -->
+    <div class="row mb-3">
+        <div class="col">
+            <button id="refreshBtn" class="btn btn-primary">
+                <i class="bi bi-arrow-clockwise"></i> Refresh Data
+            </button>
+            <button id="downloadBtn" class="btn btn-success">
+                <i class="bi bi-download"></i> Download CSV
+            </button>
+        </div>
+    </div>
+    
+    <!-- Data Table -->
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Registration Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="registrationsTable" class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Department</th>
+                                    <th>Role</th>
+                                    <th>Registration Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="registrationsTableBody">
+                                <!-- Data will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="noDataMessage" class="text-center text-muted py-4 d-none">
+                        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                        <p>No registrations yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// Check authentication status on page load
+async function checkAuth() {
+    try {
+        const response = await fetch('/api/admin/auth/check', {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            showAdminPanel();
+            loadRegistrations();
+        } else {
+            showLoginForm();
+        }
+    } catch (error) {
+        showLoginForm();
+    }
+}
+
+function showLoginForm() {
+    document.getElementById('loginSection').classList.remove('d-none');
+    document.getElementById('adminPanel').classList.add('d-none');
+}
+
+function showAdminPanel() {
+    document.getElementById('loginSection').classList.add('d-none');
+    document.getElementById('adminPanel').classList.remove('d-none');
+}
+
+// Handle login form submission
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const button = e.target.querySelector('button[type="submit"]');
+    const errorDiv = document.getElementById('loginError');
+    const errorText = document.getElementById('loginErrorText');
+    
+    errorDiv.classList.add('d-none');
+    
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Logging in...';
+    
+    const credentials = {
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value
+    };
+    
+    try {
+        const response = await fetch('/api/admin/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify(credentials)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showAdminPanel();
+            loadRegistrations();
+            e.target.reset();
+        } else {
+            errorText.textContent = result.error || 'Login failed';
+            errorDiv.classList.remove('d-none');
+        }
+    } catch (error) {
+        errorText.textContent = 'Network error. Please try again.';
+        errorDiv.classList.remove('d-none');
+    } finally {
+        button.disabled = false;
+        button.innerHTML = 'Login';
+    }
+});
+
+// Handle logout
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+    try {
+        await fetch('/api/admin/logout', { 
+            method: 'POST',
+            credentials: 'include'
+        });
+        showLoginForm();
+    } catch (error) {
+        console.error('Logout error:', error);
+    }
+});
+
+// Load registrations data
+async function loadRegistrations() {
+    try {
+        const response = await fetch('/api/admin/registrations', {
+            credentials: 'include'
+        });
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                showLoginForm();
+                return;
+            }
+            throw new Error('Failed to load registrations');
+        }
+        
+        const registrations = await response.json();
+        displayRegistrations(registrations);
+        updateStatistics(registrations);
+    } catch (error) {
+        console.error('Error loading registrations:', error);
+        document.getElementById('registrationsTableBody').innerHTML = 
+            '<tr><td colspan="6" class="text-center text-danger">Error loading data</td></tr>';
+    }
+}
+
+// Display registrations in table
+function displayRegistrations(registrations) {
+    const tbody = document.getElementById('registrationsTableBody');
+    const noDataMsg = document.getElementById('noDataMessage');
+    
+    if (registrations.length === 0) {
+        tbody.innerHTML = '';
+        noDataMsg.classList.remove('d-none');
+        return;
+    }
+    
+    noDataMsg.classList.add('d-none');
+    
+    tbody.innerHTML = registrations.map((reg, index) => {
+        const date = new Date(reg.timestamp);
+        const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        
+        return `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${escapeHtml(reg.name)}</td>
+                <td><a href="mailto:${escapeHtml(reg.email)}">${escapeHtml(reg.email)}</a></td>
+                <td>${escapeHtml(reg.department)}</td>
+                <td><span class="badge bg-${getRoleBadgeColor(reg.role)}">${escapeHtml(reg.role)}</span></td>
+                <td>${formattedDate}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Update statistics
+function updateStatistics(registrations) {
+    const total = registrations.length;
+    const faculty = registrations.filter(r => r.role === 'faculty').length;
+    const students = registrations.filter(r => r.role === 'student').length;
+    const other = registrations.filter(r => r.role === 'other').length;
+    
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('facultyCount').textContent = faculty;
+    document.getElementById('studentCount').textContent = students;
+    document.getElementById('otherCount').textContent = other;
+}
+
+// Helper function to get badge color based on role
+function getRoleBadgeColor(role) {
+    switch(role) {
+        case 'faculty': return 'primary';
+        case 'student': return 'success';
+        case 'other': return 'secondary';
+        default: return 'secondary';
+    }
+}
+
+// Helper function to escape HTML
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return String(text).replace(/[&<>"']/g, m => map[m]);
+}
+
+// Handle refresh button
+document.getElementById('refreshBtn').addEventListener('click', () => {
+    loadRegistrations();
+});
+
+// Handle download button
+document.getElementById('downloadBtn').addEventListener('click', async () => {
+    try {
+        const response = await fetch('/api/admin/registrations/download', {
+            credentials: 'include'
+        });
+        if (!response.ok) {
+            if (response.status === 401 || response.status === 403) {
+                showLoginForm();
+                return;
+            }
+            throw new Error('Download failed');
+        }
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `registrations_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Download error:', error);
+        alert('Failed to download registrations');
+    }
+});
+
+// Initialize on page load
+checkAuth();
+</script>
+
+</body>
+</html>

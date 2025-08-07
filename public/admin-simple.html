@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin Panel - Malamud Lectures</title>
+    
+    <style>
+    .stats-card {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .stats-card h3 {
+      margin: 0;
+      font-size: 2.5rem;
+      color: #0066cc;
+    }
+    .stats-card p {
+      margin: 5px 0 0 0;
+      color: #6c757d;
+    }
+    #registrationsTable {
+      font-size: 0.9rem;
+    }
+    .password-form {
+      max-width: 300px;
+      margin: 0 auto 20px;
+    }
+    </style>
+
+    <script src="site_libs/bootstrap/bootstrap.min.js"></script>
+    <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+    <link href="site_libs/bootstrap/bootstrap-52d8d4a1bc7a18dd637875c3d028be30.min.css" rel="stylesheet">
+</head>
+
+<body class="fullcontent">
+
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center mb-4">Admin Panel - Registration Data</h1>
+            
+            <!-- Simple Password Form -->
+            <div class="password-form">
+                <div class="input-group mb-3">
+                    <input type="password" class="form-control" id="passwordInput" placeholder="Enter password" onkeypress="if(event.key==='Enter') loadData()">
+                    <button class="btn btn-primary" onclick="loadData()">Load Data</button>
+                </div>
+                <div id="errorMsg" class="text-danger text-center d-none">Invalid password</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Data Section (hidden by default) -->
+    <div id="dataSection" class="d-none">
+        <!-- Statistics Row -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3 id="totalCount">0</h3>
+                    <p>Total Registrations</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3 id="facultyCount">0</h3>
+                    <p>Faculty</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3 id="studentCount">0</h3>
+                    <p>Students</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3 id="otherCount">0</h3>
+                    <p>Other</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Download Button -->
+        <div class="row mb-3">
+            <div class="col">
+                <button class="btn btn-success" onclick="downloadCSV()">
+                    <i class="bi bi-download"></i> Download CSV
+                </button>
+            </div>
+        </div>
+        
+        <!-- Data Table -->
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="registrationsTable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Department</th>
+                                        <th>Role</th>
+                                        <th>Registration Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody">
+                                    <!-- Data will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPassword = '';
+
+async function loadData() {
+    const password = document.getElementById('passwordInput').value;
+    const errorMsg = document.getElementById('errorMsg');
+    
+    if (!password) {
+        errorMsg.textContent = 'Please enter a password';
+        errorMsg.classList.remove('d-none');
+        return;
+    }
+    
+    errorMsg.classList.add('d-none');
+    currentPassword = password;
+    
+    try {
+        const response = await fetch('/api/admin/registrations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        });
+        
+        if (!response.ok) {
+            errorMsg.textContent = 'Invalid password';
+            errorMsg.classList.remove('d-none');
+            return;
+        }
+        
+        const registrations = await response.json();
+        displayData(registrations);
+        document.getElementById('dataSection').classList.remove('d-none');
+        
+    } catch (error) {
+        errorMsg.textContent = 'Error loading data';
+        errorMsg.classList.remove('d-none');
+    }
+}
+
+function displayData(registrations) {
+    // Update statistics
+    const total = registrations.length;
+    const faculty = registrations.filter(r => r.role === 'faculty').length;
+    const students = registrations.filter(r => r.role === 'student').length;
+    const other = registrations.filter(r => r.role === 'other').length;
+    
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('facultyCount').textContent = faculty;
+    document.getElementById('studentCount').textContent = students;
+    document.getElementById('otherCount').textContent = other;
+    
+    // Update table
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = registrations.map((reg, index) => {
+        const date = new Date(reg.timestamp);
+        const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+        
+        return `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${reg.name}</td>
+                <td><a href="mailto:${reg.email}">${reg.email}</a></td>
+                <td>${reg.department}</td>
+                <td><span class="badge bg-${getRoleBadgeColor(reg.role)}">${reg.role}</span></td>
+                <td>${formattedDate}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function getRoleBadgeColor(role) {
+    switch(role) {
+        case 'faculty': return 'primary';
+        case 'student': return 'success';
+        case 'other': return 'secondary';
+        default: return 'secondary';
+    }
+}
+
+async function downloadCSV() {
+    try {
+        const response = await fetch('/api/admin/registrations/download', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: currentPassword })
+        });
+        
+        if (!response.ok) {
+            alert('Download failed. Please reload the page and try again.');
+            return;
+        }
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `registrations_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    } catch (error) {
+        alert('Download failed');
+    }
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template Viewer</title>
+    <style>
+        body {
+            margin: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        .instructions {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .email-preview {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .success {
+            color: #4CAF50;
+            margin-left: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        <h1>Email Template Viewer</h1>
+        <p>This page displays your HTML email template. You can:</p>
+        <ol>
+            <li>Click "Select Email Content" to highlight the email</li>
+            <li>Copy (Ctrl+C or Cmd+C)</li>
+            <li>Paste into Gmail compose window - it will appear as formatted content, not code</li>
+        </ol>
+        <button onclick="selectEmailContent()">Select Email Content</button>
+        <button onclick="copyEmailContent()">Copy Email Content</button>
+        <span class="success" id="successMsg">✓ Content selected - now copy it!</span>
+        <span class="success" id="copyMsg">✓ Content copied to clipboard!</span>
+    </div>
+
+    <div class="email-preview" id="emailContent">
+        <!-- Email content will be loaded here -->
+    </div>
+
+    <script>
+        // Load the email template
+        fetch('email-template.html')
+            .then(response => response.text())
+            .then(html => {
+                // Extract just the body content
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const bodyContent = doc.body.innerHTML;
+                document.getElementById('emailContent').innerHTML = bodyContent;
+            })
+            .catch(error => {
+                document.getElementById('emailContent').innerHTML = '<p>Error loading email template</p>';
+            });
+
+        function selectEmailContent() {
+            const emailContent = document.getElementById('emailContent');
+            const range = document.createRange();
+            range.selectNodeContents(emailContent);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            // Show success message
+            document.getElementById('successMsg').style.display = 'inline';
+            setTimeout(() => {
+                document.getElementById('successMsg').style.display = 'none';
+            }, 3000);
+        }
+
+        async function copyEmailContent() {
+            const emailContent = document.getElementById('emailContent');
+            
+            try {
+                // Create a selection range
+                const range = document.createRange();
+                range.selectNodeContents(emailContent);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                // Execute copy command
+                document.execCommand('copy');
+                
+                // Clear selection
+                selection.removeAllRanges();
+                
+                // Show success message
+                document.getElementById('copyMsg').style.display = 'inline';
+                setTimeout(() => {
+                    document.getElementById('copyMsg').style.display = 'none';
+                }, 3000);
+            } catch (err) {
+                alert('Failed to copy content. Please try selecting and copying manually.');
+                console.error('Copy failed:', err);
+            }
+        }
+    </script>
+</body>
+</html>
