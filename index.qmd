@@ -13,6 +13,14 @@
 
 ---
 
+::: {style="text-align: center;"}
+
+#### [Slides with links to notebooks](Slides1_IntroToML.pdf)
+
+:::
+
+---
+
 :::: {.columns}
 ::: {.column width="20%"} 
 ![](photo.jpg)
